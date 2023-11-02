@@ -4,6 +4,7 @@ import model.ExpenseTrackerModel;
 import view.ExpenseTrackerView;
 import model.Filter.AmountFilter;
 import model.Filter.CategoryFilter;
+import javax.swing.JTable;
 
 public class ExpenseTrackerApp {
 
@@ -77,9 +78,10 @@ public class ExpenseTrackerApp {
       }
     });
 
-    private static boolean deleteTransaction(ExpenseTrackerController controller, ExpenseTrackerView view) {
-    int row_index = view.getTransactionsTable().getSelectedRow();
+  }
 
+  private static boolean deleteTransaction(ExpenseTrackerController controller, ExpenseTrackerView view) {
+    int row_index = view.getJTransactionsTable().getSelectedRow();
     if (checkRowNum(view, row_index)) {
       boolean is_deleted = controller.deleteTransaction(row_index);
       return is_deleted;
@@ -88,18 +90,8 @@ public class ExpenseTrackerApp {
     }
   }
 
-  /**
-   * Function to check whether the row number is valid (a precautionary function)
-   * @param view To access the total number of rows present in the table
-   * @param row_index Row index of the selected transaction
-   * @return boolean value specifying whether the row index is valid or not
-   */
   private static boolean checkRowNum(ExpenseTrackerView view, int row_index) {
-    int row_counts = view.getTransactionsTable().getRowCount();
-    return (row_index < row_counts);
-  }
-
- 
-
+    int row_counts = view.getJTransactionsTable().getRowCount();
+    return (row_index < row_counts) && (row_index >= 0);
   }
 }

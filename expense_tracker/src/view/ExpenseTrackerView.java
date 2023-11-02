@@ -102,6 +102,10 @@ public class ExpenseTrackerView extends JFrame {
     return (List<Transaction>) transactionsTable;
   }
 
+  public JTable getJTransactionsTable(){
+    return transactionsTable;
+  }
+
   public double getAmountField() {
     if(amountField.getText().isEmpty()) {
       return 0;
