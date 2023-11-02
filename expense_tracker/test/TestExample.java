@@ -165,10 +165,8 @@ public class TestExample {
         // Pre-condition: List of transactions is empty
         assertEquals(0, model.getTransactions().size());
 
-        // TODO: should implement the error message part in view
-
-        // controller.deleteTransaction(0);
-        
+        controller.deleteTransaction(0);
+        assertEquals(0, view.getTableModel().getRowCount());
         // TODO: check if a JOptionPane appears after undo in a empty list
     }
 
