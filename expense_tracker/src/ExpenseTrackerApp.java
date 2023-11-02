@@ -67,7 +67,39 @@ public class ExpenseTrackerApp {
     JOptionPane.showMessageDialog(view,exception.getMessage());
     view.toFront();
    }});
-    
+
+    view.getDeleteTransactionBtn().addActionListener(e -> {
+      boolean is_deleted = deleteTransaction(controller, view);
+
+      if (!is_deleted) {
+        JOptionPane.showMessageDialog(view, "There's no such transaction in the table!");
+        view.toFront();
+      }
+    });
+
+    private static boolean deleteTransaction(ExpenseTrackerController controller, ExpenseTrackerView view) {
+    int row_index = view.getTransactionsTable().getSelectedRow();
+
+    if (checkRowNum(view, row_index)) {
+      boolean is_deleted = controller.deleteTransaction(row_index);
+      return is_deleted;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Function to check whether the row number is valid (a precautionary function)
+   * @param view To access the total number of rows present in the table
+   * @param row_index Row index of the selected transaction
+   * @return boolean value specifying whether the row index is valid or not
+   */
+  private static boolean checkRowNum(ExpenseTrackerView view, int row_index) {
+    int row_counts = view.getTransactionsTable().getRowCount();
+    return (row_index < row_counts);
+  }
+
+ 
 
   }
 }
