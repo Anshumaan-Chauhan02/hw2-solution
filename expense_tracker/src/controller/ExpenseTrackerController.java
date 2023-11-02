@@ -72,4 +72,12 @@ public class ExpenseTrackerController {
       view.toFront();}
 
   }
+
+  public boolean deleteTransaction(int index_number) {
+    model.removeTransaction(index_number);
+    view.deleteTransactionRow(index_number); // the row number also start from 0
+    refresh();
+    return true;
+  }
+  
 }
