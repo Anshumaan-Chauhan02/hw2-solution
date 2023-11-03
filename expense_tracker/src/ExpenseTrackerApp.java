@@ -69,9 +69,11 @@ public class ExpenseTrackerApp {
     view.toFront();
    }});
 
+    // Creating an ActionListener to handle the event of ButtonClick on Delete Transaction Button
     view.getDeleteTransactionBtn().addActionListener(e -> {
+      // Checking whether the delete operation was successful or not
       boolean is_deleted = deleteTransaction(controller, view);
-
+      // Displaying an Error Message using JOptionPane on the GUI 
       if (!is_deleted) {
         JOptionPane.showMessageDialog(view, "There's no such transaction in the table!");
         view.toFront();
