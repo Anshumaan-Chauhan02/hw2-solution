@@ -25,6 +25,10 @@ public class ExpenseTrackerModel {
     transactions.remove(t);
   }
   
+  /**
+   * Function to delete the transaction based on the index
+   * @param index Specifies the index where the transaction to be removed is present
+   */
   public void removeTransaction(int index) {
     transactions.remove(index);
   }
