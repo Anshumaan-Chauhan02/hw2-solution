@@ -14,6 +14,10 @@ import controller.ExpenseTrackerController;
 import model.ExpenseTrackerModel;
 import model.Transaction;
 import view.ExpenseTrackerView;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Window;
+import javax.swing.*;
 
 
 public class TestExample {
@@ -21,7 +25,8 @@ public class TestExample {
   private ExpenseTrackerModel model;
   private ExpenseTrackerView view;
   private ExpenseTrackerController controller;
-
+    
+  // Changed to BeforeAll so that we do not have to do cleanup 
   @Before
   public void setup() {
     model = new ExpenseTrackerModel();
@@ -118,16 +123,20 @@ public class TestExample {
         // - Steps: Add a transaction with amount 50.00 and category ”food”
         // - Expected Output: Transaction is added to the table, Total Cost is updated
 
+        // Precondition, the model should be empty
+        assertEquals(0, model.getTransactions().size());
+
         double amount = 50.0;
         String category = "food";
-
-        Integer total_row_count = view.getTableModel().getRowCount();
-        double total_cost = view.getAmountField();
-
+        
+        // Adding a new transaction to the controller
         controller.addTransaction(amount, category);
 
-        assertEquals(total_row_count + 1, view.getTableModel().getRowCount());
-        assertEquals(total_cost + amount, view.getAmountField(), 0.01);
+        // asserting that the changes are observed in the Table Model
+        // One row for transaction and one row for the total cost row 
+        assertEquals(2, view.getTableModel().getRowCount());
+        // asserting that the total cost is correctly updated
+        assertEquals(amount, getTotalCost(), 0.01);
     }
 
     @Test
@@ -135,30 +144,103 @@ public class TestExample {
         // - Steps: Attempt to add a transaction with an invalid amount or category
         // - Expected Output: Error messages are displayed, transactions and Total Cost
         // remain unchanged
-        double amount = -50.0; // negative value
-        String category = "foodddd"; // invalid category name
+        double inv_amount = -50.0; // negative value
+        String val_category = "food"; 
+
+        double val_amount = 50.0;
+        String inv_category = "foodddd"; // invalid category name
 
         int total_row_count = view.getTableModel().getRowCount();
         double total_cost = view.getAmountField();
 
-        controller.addTransaction(amount, category);
+        controller.addTransaction(inv_amount, val_category);
 
         // row count and total cost values should be unchangable
         assertEquals(total_row_count, view.getTableModel().getRowCount());
-        assertEquals(total_cost, view.getAmountField());
+        assertEquals(total_cost, view.getAmountField(), 0.01);
+        // check for occurence of the error message
+        
+        // TODO ----- Check the error message
+        // assertEquals(view.JOptionPane.getMessage(), IllegalArgumentException.getMessage());
+        
+        controller.addTransaction(val_amount, inv_category);
 
+        // row count and total cost values should be unchangable
+        assertEquals(total_row_count, view.getTableModel().getRowCount());
+        assertEquals(total_cost, view.getAmountField(), 0.01);
+        // check for the occurence of error message
 
-        // TODO: check error joptionpane
-        // Component[] components = view.getComponents(); // view inherited from JFrame
-
-        // for (int i = 0; i < components.length; ++i) {
-        // if ((components[i] instanceof JOptionPane)) {
-        // boolean flag = true;
-        // } else {
-        // boolean flag = false;
-        // }
-        // }
+        // assertEquals(JOptionPane.getMessage(), IllegalArgumentException.getMessage());
+        
     }
+    
+    @Test
+    public void testFilterAmount()
+    {
+        double amount_1 = 50.0;
+        String category_1 = "food";
+
+        double amount_2 = 120.0;
+        String category_2 = "travel";
+
+        double amount_3 = 100.0;
+        String category_3 = "food";
+
+        controller.addTransaction(amount_1, category_1);
+        controller.addTransaction(amount_2, category_2);
+        controller.addTransaction(amount_3, category_3);
+
+        double filter_amount = 100.0;
+
+        AmountFilter amountFilter = new AmountFilter(filter_amount);
+        controller.setFilter(amountFilter);
+        controller.applyFilter();
+
+        for(int col=0; i<=3;col++)
+        {
+            assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 2, col));
+        }
+    
+    }
+
+    @Test
+    public void testFilterCategory()
+    {
+        double amount_1 = 50.0;
+        String category_1 = "food";
+
+        double amount_2 = 120.0;
+        String category_2 = "travel";
+
+        double amount_3 = 100.0;
+        String category_3 = "food";
+
+        controller.addTransaction(amount_1, category_1);
+        controller.addTransaction(amount_2, category_2);
+        controller.addTransaction(amount_3, category_3);
+
+        double filter_category = "travel";
+
+        CategoryFilter categoryFilter = new CategoryFilter(filter_category);
+        controller.setFilter(amountFilter);
+        controller.applyFilter();
+
+        for(int col=0; i<=3;col++)
+        {
+            assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 1, col));
+        }
+    
+    }
+
+    public Color get_jtable_cell_component(JTable jtable, int row, int column){
+        renderer = jtable.getCellRenderer(row, column);
+        value = jtable.getModel().getValueAt(row, column);
+        selectedColor = jtable.getSelectionModel().isSelectedIndex(row);
+        hasFocus = True;
+        component = renderer.getTableCellRendererComponent(jtable, value, selectedColor, hasFocus, row, column);
+        return component.getBackground();
+    }
+
 
     @Test
     public void testUndoNotAllowed() {
