@@ -80,8 +80,16 @@ public class ExpenseTrackerApp {
 
   }
 
+  /**
+   * Function called by the action listener of the delete button to remove a selected transaction from the model and the view
+   * @param controller controller to delete the transaction from model and view
+   * @param view used to get the index of selected transaction
+   * @return boolean status code indicating whether the deletion was successful or not 
+   */
   private static boolean deleteTransaction(ExpenseTrackerController controller, ExpenseTrackerView view) {
+    // Getting the index of selected row in JTable
     int row_index = view.getJTransactionsTable().getSelectedRow();
+    // Validating the row index
     if (checkRowNum(view, row_index)) {
       boolean is_deleted = controller.deleteTransaction(row_index);
       return is_deleted;
@@ -90,8 +98,15 @@ public class ExpenseTrackerApp {
     }
   }
 
+  /**
+   * Function to check whether the row number is valid (a precautionary function)
+   * @param view To access the total number of rows present in the table
+   * @param row_index Row index of the selected transaction
+   * @return boolean value specifying whether the row index is valid or not
+   */
   private static boolean checkRowNum(ExpenseTrackerView view, int row_index) {
     int row_counts = view.getJTransactionsTable().getRowCount();
+    // Checking whether the current index falls within a valid range
     return (row_index < row_counts) && (row_index >= 0);
   }
 }
