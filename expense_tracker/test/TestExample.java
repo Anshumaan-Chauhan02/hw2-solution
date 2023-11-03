@@ -265,7 +265,6 @@ public class TestExample {
         for (int i = 0; i < 2; i++) {
             controller.addTransaction(amount, category);
         }
-
         // Pre-condition: List of transactions contains only
         // the added transaction
         int transaction_size = model.getTransactions().size()
