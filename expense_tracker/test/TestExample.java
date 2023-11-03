@@ -113,4 +113,102 @@ public class TestExample {
         assertEquals(0.00, totalCost, 0.01);
     }
     
+    @Test
+    public void testAddTransactionController() {
+        // - Steps: Add a transaction with amount 50.00 and category ”food”
+        // - Expected Output: Transaction is added to the table, Total Cost is updated
+
+        double amount = 50.0;
+        String category = "food";
+
+        Integer total_row_count = view.getTableModel().getRowCount();
+        double total_cost = view.getAmountField();
+
+        controller.addTransaction(amount, category);
+
+        assertEquals(total_row_count + 1, view.getTableModel().getRowCount());
+        assertEquals(total_cost + amount, view.getAmountField(), 0.01);
+    }
+
+    @Test
+    public void testInvalidInput() {
+        // - Steps: Attempt to add a transaction with an invalid amount or category
+        // - Expected Output: Error messages are displayed, transactions and Total Cost
+        // remain unchanged
+        double amount = -50.0; // negative value
+        String category = "foodddd"; // invalid category name
+
+        int total_row_count = view.getTableModel().getRowCount();
+        double total_cost = view.getAmountField();
+
+        controller.addTransaction(amount, category);
+
+        // row count and total cost values should be unchangable
+        assertEquals(total_row_count, view.getTableModel().getRowCount());
+        assertEquals(total_cost, view.getAmountField());
+
+
+        // TODO: check error joptionpane
+        // Component[] components = view.getComponents(); // view inherited from JFrame
+
+        // for (int i = 0; i < components.length; ++i) {
+        // if ((components[i] instanceof JOptionPane)) {
+        // boolean flag = true;
+        // } else {
+        // boolean flag = false;
+        // }
+        // }
+    }
+
+    @Test
+    public void testUndoNotAllowed() {
+        // Pre-condition: List of transactions is empty
+        assertEquals(0, model.getTransactions().size());
+
+        controller.deleteTransaction(0);
+        assertEquals(0, view.getTableModel().getRowCount());
+        // TODO: check if a JOptionPane appears after undo in a empty list
+    }
+
+    @Test
+    public void testUndoAllowed() {
+        // Pre-condition: List of transactions is empty
+        assertEquals(0, model.getTransactions().size());
+
+        // Perform the action: Add and remove a transaction
+        double amount = 50.0;
+        String category = "food";
+
+        Transaction addedTransaction = new Transaction(amount, category);
+        for (int i = 0; i < 2; i++) {
+            controller.addTransaction(amount, category);
+        }
+
+        // Pre-condition: List of transactions contains only
+        // the added transaction
+        int transaction_size = model.getTransactions().size()
+        assertEquals(3, transaction_size);
+        Transaction firstTransaction = model.getTransactions().get(1);
+        checkTransaction(amount, category, firstTransaction);
+
+        double current_cost = getTotalCost();
+        assertEquals(amount, getTotalCost(), 0.01);        
+
+        // Perform the action: Remove the transaction
+        // model.removeTransaction(addedTransaction);
+        // should use something from the controller
+
+        // Post-condition: List of transactions is empty
+        List<Transaction> transactions = model.getTransactions();
+        assertEquals(transaction_size - 1, transactions.size());
+
+        // Check the total cost after removing the transaction
+        double totalCost = getTotalCost();
+        assertEquals(current_cost - amount, totalCost, 0.01);
+
+        // Check the view instead of the model stuffs
+        assertEquals(current_cost - amount, view.getTableModel().getRowCount();, 0.01);
+        assertEquals(transaction_size - 1, view.getAmountField());
+    }
+
 }
