@@ -279,13 +279,19 @@ public class TestExample {
     }
 
 
-    // @Test
-    // public void testUndoNotAllowed() {
-    //     // Pre-condition: List of transactions is empty
-    //     assertEquals(0, model.getTransactions().size());
+    @Test
+    public void testUndoNotAllowed() {
+        // Pre-condition: List of transactions is empty
+        assertEquals(0, model.getTransactions().size());
 
-    //     controller.deleteTransaction(0);
-    //     assertEquals(0, view.getTableModel().getRowCount());
-    //     // TODO: check if a JOptionPane appears after undo in a empty list
-    // }
+        try{
+            controller.deleteTransaction(0);
+        }
+        catch(IllegalArgumentException error)
+        {
+            String message = "There's no such transaction in the table!";
+            assertEquals(message, error.getMessage());
+        }
+        assertEquals(0, view.getTableModel().getRowCount());
+    }
 }
