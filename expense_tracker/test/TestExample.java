@@ -280,12 +280,28 @@ public class TestExample {
 
 
     @Test
-    public void testUndoNotAllowed() {
+    public void testUndoNotAllowed_N() {
         // Pre-condition: List of transactions is empty
         assertEquals(0, model.getTransactions().size());
 
         try{
-            controller.deleteTransaction(0);
+            view.getDeleteTransactionBtn().doClick();
+        }
+        catch(IllegalArgumentException error)
+        {
+            String message = "There's no such transaction in the table!";
+            assertEquals(message, error.getMessage());
+        }
+        assertEquals(0, view.getTableModel().getRowCount());
+    }
+
+    @Test
+    public void testUndoNotAllowed_E() {
+        // Pre-condition: List of transactions is empty
+        assertEquals(0, model.getTransactions().size());
+
+        try{
+            view.getDeleteTransactionBtn().doClick();
         }
         catch(IllegalArgumentException error)
         {
