@@ -19,6 +19,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Window;
 import javax.swing.*;
+import model.Filter.*;
 
 
 public class TestExample {
@@ -177,35 +178,36 @@ public class TestExample {
         assertEquals(0, view.getJTransactionsTable().getRowCount());
     }
 
+    @Test
+    public void testFilterAmount()
+    {
+         // Precondition, the model should be empty
+        assertEquals(0, model.getTransactions().size());
+
+        double amount_1 = 50.0;
+        String category_1 = "food";
+
+        double amount_2 = 120.0;
+        String category_2 = "travel";
+
+        double amount_3 = 100.0;
+        String category_3 = "food";
+
+        controller.addTransaction(amount_1, category_1);
+        controller.addTransaction(amount_2, category_2);
+        controller.addTransaction(amount_3, category_3);
+
+        double filter_amount = 100.0;
+
+        AmountFilter amountFilter = new AmountFilter(filter_amount);
+        
+        List<Transaction> filteredTransactions = amountFilter.filter(model.getTransactions());
+
+        assertEquals(1,filteredTransactions.size());
+        assertEquals(amount_3,filteredTransactions.get(0).getAmount(), 0.01);
+        assertEquals(category_3,filteredTransactions.get(0).getCategory());
     
-    // @Test
-    // public void testFilterAmount()
-    // {
-    //     double amount_1 = 50.0;
-    //     String category_1 = "food";
-
-    //     double amount_2 = 120.0;
-    //     String category_2 = "travel";
-
-    //     double amount_3 = 100.0;
-    //     String category_3 = "food";
-
-    //     controller.addTransaction(amount_1, category_1);
-    //     controller.addTransaction(amount_2, category_2);
-    //     controller.addTransaction(amount_3, category_3);
-
-    //     double filter_amount = 100.0;
-
-    //     AmountFilter amountFilter = new AmountFilter(filter_amount);
-    //     controller.setFilter(amountFilter);
-    //     controller.applyFilter();
-
-    //     for(int col=0; i<=3;col++)
-    //     {
-    //         assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 2, col));
-    //     }
-    
-    // }
+    }
 
     // @Test
     // public void testFilterCategory()
@@ -234,15 +236,6 @@ public class TestExample {
     //         assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 1, col));
     //     }
     
-    // }
-
-    // public Color get_jtable_cell_component(JTable jtable, int row, int column){
-    //     renderer = jtable.getCellRenderer(row, column);
-    //     value = jtable.getModel().getValueAt(row, column);
-    //     selectedColor = jtable.getSelectionModel().isSelectedIndex(row);
-    //     hasFocus = True;
-    //     component = renderer.getTableCellRendererComponent(jtable, value, selectedColor, hasFocus, row, column);
-    //     return component.getBackground();
     // }
 
 
