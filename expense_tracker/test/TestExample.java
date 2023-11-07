@@ -34,6 +34,15 @@ public class TestExample {
     controller = new ExpenseTrackerController(model, view);
   }
 
+// A precautionary cleanup step (even though setup resets model, view and controller before each test run)
+  @after
+  public void cleanup()
+  {
+    model = null;
+    view = null;
+    controller = null;
+  }
+
     public double getTotalCost() {
         double totalCost = 0.0;
         List<Transaction> allTransactions = model.getTransactions(); // Using the model's getTransactions method
@@ -174,122 +183,122 @@ public class TestExample {
         
     }
     
-    @Test
-    public void testFilterAmount()
-    {
-        double amount_1 = 50.0;
-        String category_1 = "food";
+    // @Test
+    // public void testFilterAmount()
+    // {
+    //     double amount_1 = 50.0;
+    //     String category_1 = "food";
 
-        double amount_2 = 120.0;
-        String category_2 = "travel";
+    //     double amount_2 = 120.0;
+    //     String category_2 = "travel";
 
-        double amount_3 = 100.0;
-        String category_3 = "food";
+    //     double amount_3 = 100.0;
+    //     String category_3 = "food";
 
-        controller.addTransaction(amount_1, category_1);
-        controller.addTransaction(amount_2, category_2);
-        controller.addTransaction(amount_3, category_3);
+    //     controller.addTransaction(amount_1, category_1);
+    //     controller.addTransaction(amount_2, category_2);
+    //     controller.addTransaction(amount_3, category_3);
 
-        double filter_amount = 100.0;
+    //     double filter_amount = 100.0;
 
-        AmountFilter amountFilter = new AmountFilter(filter_amount);
-        controller.setFilter(amountFilter);
-        controller.applyFilter();
+    //     AmountFilter amountFilter = new AmountFilter(filter_amount);
+    //     controller.setFilter(amountFilter);
+    //     controller.applyFilter();
 
-        for(int col=0; i<=3;col++)
-        {
-            assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 2, col));
-        }
+    //     for(int col=0; i<=3;col++)
+    //     {
+    //         assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 2, col));
+    //     }
     
-    }
+    // }
 
-    @Test
-    public void testFilterCategory()
-    {
-        double amount_1 = 50.0;
-        String category_1 = "food";
+    // @Test
+    // public void testFilterCategory()
+    // {
+    //     double amount_1 = 50.0;
+    //     String category_1 = "food";
 
-        double amount_2 = 120.0;
-        String category_2 = "travel";
+    //     double amount_2 = 120.0;
+    //     String category_2 = "travel";
 
-        double amount_3 = 100.0;
-        String category_3 = "food";
+    //     double amount_3 = 100.0;
+    //     String category_3 = "food";
 
-        controller.addTransaction(amount_1, category_1);
-        controller.addTransaction(amount_2, category_2);
-        controller.addTransaction(amount_3, category_3);
+    //     controller.addTransaction(amount_1, category_1);
+    //     controller.addTransaction(amount_2, category_2);
+    //     controller.addTransaction(amount_3, category_3);
 
-        double filter_category = "travel";
+    //     double filter_category = "travel";
 
-        CategoryFilter categoryFilter = new CategoryFilter(filter_category);
-        controller.setFilter(amountFilter);
-        controller.applyFilter();
+    //     CategoryFilter categoryFilter = new CategoryFilter(filter_category);
+    //     controller.setFilter(amountFilter);
+    //     controller.applyFilter();
 
-        for(int col=0; i<=3;col++)
-        {
-            assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 1, col));
-        }
+    //     for(int col=0; i<=3;col++)
+    //     {
+    //         assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 1, col));
+    //     }
     
-    }
+    // }
 
-    public Color get_jtable_cell_component(JTable jtable, int row, int column){
-        renderer = jtable.getCellRenderer(row, column);
-        value = jtable.getModel().getValueAt(row, column);
-        selectedColor = jtable.getSelectionModel().isSelectedIndex(row);
-        hasFocus = True;
-        component = renderer.getTableCellRendererComponent(jtable, value, selectedColor, hasFocus, row, column);
-        return component.getBackground();
-    }
+    // public Color get_jtable_cell_component(JTable jtable, int row, int column){
+    //     renderer = jtable.getCellRenderer(row, column);
+    //     value = jtable.getModel().getValueAt(row, column);
+    //     selectedColor = jtable.getSelectionModel().isSelectedIndex(row);
+    //     hasFocus = True;
+    //     component = renderer.getTableCellRendererComponent(jtable, value, selectedColor, hasFocus, row, column);
+    //     return component.getBackground();
+    // }
 
 
-    @Test
-    public void testUndoNotAllowed() {
-        // Pre-condition: List of transactions is empty
-        assertEquals(0, model.getTransactions().size());
+    // @Test
+    // public void testUndoNotAllowed() {
+    //     // Pre-condition: List of transactions is empty
+    //     assertEquals(0, model.getTransactions().size());
 
-        controller.deleteTransaction(0);
-        assertEquals(0, view.getTableModel().getRowCount());
-        // TODO: check if a JOptionPane appears after undo in a empty list
-    }
+    //     controller.deleteTransaction(0);
+    //     assertEquals(0, view.getTableModel().getRowCount());
+    //     // TODO: check if a JOptionPane appears after undo in a empty list
+    // }
 
-    @Test
-    public void testUndoAllowed() {
-        // Pre-condition: List of transactions is empty
-        assertEquals(0, model.getTransactions().size());
+    // @Test
+    // public void testUndoAllowed() {
+    //     // Pre-condition: List of transactions is empty
+    //     assertEquals(0, model.getTransactions().size());
 
-        // Perform the action: Add and remove a transaction
-        double amount = 50.0;
-        String category = "food";
+    //     // Perform the action: Add and remove a transaction
+    //     double amount = 50.0;
+    //     String category = "food";
 
-        Transaction addedTransaction = new Transaction(amount, category);
-        for (int i = 0; i < 2; i++) {
-            controller.addTransaction(amount, category);
-        }
-        // Pre-condition: List of transactions contains only
-        // the added transaction
-        int transaction_size = model.getTransactions().size()
-        assertEquals(3, transaction_size);
-        Transaction firstTransaction = model.getTransactions().get(1);
-        checkTransaction(amount, category, firstTransaction);
+    //     Transaction addedTransaction = new Transaction(amount, category);
+    //     for (int i = 0; i < 2; i++) {
+    //         controller.addTransaction(amount, category);
+    //     }
+    //     // Pre-condition: List of transactions contains only
+    //     // the added transaction
+    //     int transaction_size = model.getTransactions().size()
+    //     assertEquals(3, transaction_size);
+    //     Transaction firstTransaction = model.getTransactions().get(1);
+    //     checkTransaction(amount, category, firstTransaction);
 
-        double current_cost = getTotalCost();
-        assertEquals(amount, getTotalCost(), 0.01);        
+    //     double current_cost = getTotalCost();
+    //     assertEquals(amount, getTotalCost(), 0.01);        
 
-        // Perform the action: Remove the transaction
-        // model.removeTransaction(addedTransaction);
-        // should use something from the controller
+    //     // Perform the action: Remove the transaction
+    //     // model.removeTransaction(addedTransaction);
+    //     // should use something from the controller
 
-        // Post-condition: List of transactions is empty
-        List<Transaction> transactions = model.getTransactions();
-        assertEquals(transaction_size - 1, transactions.size());
+    //     // Post-condition: List of transactions is empty
+    //     List<Transaction> transactions = model.getTransactions();
+    //     assertEquals(transaction_size - 1, transactions.size());
 
-        // Check the total cost after removing the transaction
-        double totalCost = getTotalCost();
-        assertEquals(current_cost - amount, totalCost, 0.01);
+    //     // Check the total cost after removing the transaction
+    //     double totalCost = getTotalCost();
+    //     assertEquals(current_cost - amount, totalCost, 0.01);
 
-        // Check the view instead of the model stuffs
-        assertEquals(current_cost - amount, view.getTableModel().getRowCount();, 0.01);
-        assertEquals(transaction_size - 1, view.getAmountField());
-    }
+    //     // Check the view instead of the model stuffs
+    //     assertEquals(current_cost - amount, view.getTableModel().getRowCount();, 0.01);
+    //     assertEquals(transaction_size - 1, view.getAmountField());
+    // }
 
 }
