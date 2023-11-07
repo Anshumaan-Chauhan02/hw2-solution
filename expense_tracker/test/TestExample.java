@@ -192,6 +192,36 @@ public class TestExample {
     }
 
     @Test
+    public void testInvalidInput() {
+        // - Steps: Attempt to add a transaction with an invalid amount or category
+        // - Expected Output: Error messages are displayed, transactions and Total Cost
+        // remain unchanged
+
+        // Precondition, the model should be empty
+        assertEquals(0, model.getTransactions().size());
+
+        double amount = -50.0; // negative value
+        String category = "food"; // invalid category name
+
+        try
+        {
+            Transaction transaction = new Transaction(amount, category);
+            controller.addTransaction(amount, category);
+        }
+        catch(java.lang.IllegalArgumentException error_m)
+        {
+            String message = "The amount is not valid.";
+            assertEquals(message, error_m.getMessage());
+            
+            // transaction size and total cost should be unchanged
+            assertEquals(0, model.getTransactions().size());
+            assertEquals(0, getTotalCost(), 0.01);
+        }
+    }
+
+
+
+    @Test
     public void testFilterAmount()
     {
          // Precondition, the model should be empty
@@ -310,4 +340,38 @@ public class TestExample {
         }
         assertEquals(0, view.getTableModel().getRowCount());
     }
+
+
+    @Test
+    public void testUndoAllowed() {
+        // Pre-condition: List of transactions is empty
+        assertEquals(0, model.getTransactions().size());
+
+        // Perform the action: Add 3 transactions
+        double amount = 50.0;
+        String category = "food";
+
+        Transaction addedTransaction = new Transaction(amount, category);
+        for (int i = 0; i < 3; i++) {
+            controller.addTransaction(amount, category);
+        }
+
+        // view elements
+        int view_row_numbers = view.getTableModel().getRowCount();
+        double view_total_cost = getTotalCost(view_row_numbers);
+
+        // Perform the action: Remove 1 transaction
+        controller.deleteTransaction(1);
+
+        // Post-condition: View - number of rows
+        assertEquals(view_row_numbers - 1, view.getTableModel().getRowCount());
+        // Post-condition: View - total costs
+        assertEquals(view_total_cost - amount, getTotalCost(view.getTableModel().getRowCount()), 0.01);
+    }
+
+    private double getTotalCost(int row_number) {
+        double total_cost = Double.parseDouble(view.getTableModel().getValueAt(row_number - 1, 3).toString());
+        return total_cost;
+    }
+
 }
