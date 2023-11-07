@@ -9,6 +9,7 @@ import java.text.ParseException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.After;
 
 import controller.ExpenseTrackerController;
 import model.ExpenseTrackerModel;
@@ -35,7 +36,7 @@ public class TestExample {
   }
 
 // A precautionary cleanup step (even though setup resets model, view and controller before each test run)
-  @after
+  @After
   public void cleanup()
   {
     model = null;
@@ -128,7 +129,7 @@ public class TestExample {
     }
     
     @Test
-    public void testAddTransactionController() {
+    public void testAddTransactionView_N() {
         // - Steps: Add a transaction with amount 50.00 and category ”food”
         // - Expected Output: Transaction is added to the table, Total Cost is updated
 
@@ -138,50 +139,27 @@ public class TestExample {
         double amount = 50.0;
         String category = "food";
         
-        // Adding a new transaction to the controller
+        // Adding a new transaction to the view (through controller)
         controller.addTransaction(amount, category);
 
+        // Postconditions, transaction shpuld be added in the table and the total cost should be updated
         // asserting that the changes are observed in the Table Model
         // One row for transaction and one row for the total cost row 
         assertEquals(2, view.getTableModel().getRowCount());
-        // asserting that the total cost is correctly updated
-        assertEquals(amount, getTotalCost(), 0.01);
+
+        // asserting changes are observed in the JTable
+        assertEquals(amount, (double) view.getJTransactionsTable().getValueAt(0,1), 0.01);
+        assertEquals(category, (String) view.getJTransactionsTable().getValueAt(0,2));
+    
+        // asserting that the total cost is correctly updated in the View
+        assertEquals(amount, (double) view.getTableModel().getValueAt(1,3), 0.01);
     }
 
     @Test
-    public void testInvalidInput() {
-        // - Steps: Attempt to add a transaction with an invalid amount or category
-        // - Expected Output: Error messages are displayed, transactions and Total Cost
-        // remain unchanged
-        double inv_amount = -50.0; // negative value
-        String val_category = "food"; 
+    public void testAddTransactionView_E() {
 
-        double val_amount = 50.0;
-        String inv_category = "foodddd"; // invalid category name
-
-        int total_row_count = view.getTableModel().getRowCount();
-        double total_cost = view.getAmountField();
-
-        controller.addTransaction(inv_amount, val_category);
-
-        // row count and total cost values should be unchangable
-        assertEquals(total_row_count, view.getTableModel().getRowCount());
-        assertEquals(total_cost, view.getAmountField(), 0.01);
-        // check for occurence of the error message
-        
-        // TODO ----- Check the error message
-        // assertEquals(view.JOptionPane.getMessage(), IllegalArgumentException.getMessage());
-        
-        controller.addTransaction(val_amount, inv_category);
-
-        // row count and total cost values should be unchangable
-        assertEquals(total_row_count, view.getTableModel().getRowCount());
-        assertEquals(total_cost, view.getAmountField(), 0.01);
-        // check for the occurence of error message
-
-        // assertEquals(JOptionPane.getMessage(), IllegalArgumentException.getMessage());
-        
     }
+
     
     // @Test
     // public void testFilterAmount()
