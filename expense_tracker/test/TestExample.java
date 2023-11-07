@@ -27,8 +27,7 @@ public class TestExample {
   private ExpenseTrackerModel model;
   private ExpenseTrackerView view;
   private ExpenseTrackerController controller;
-    
-  // Changed to BeforeAll so that we do not have to do cleanup 
+     
   @Before
   public void setup() {
     model = new ExpenseTrackerModel();
@@ -143,7 +142,7 @@ public class TestExample {
         // Adding a new transaction to the view (through controller)
         controller.addTransaction(amount, category);
 
-        // Postconditions, transaction shpuld be added in the table and the total cost should be updated
+        // Postconditions, transaction should be added in the table and the total cost should be updated
         // asserting that the changes are observed in the Table Model
         // One row for transaction and one row for the total cost row 
         assertEquals(2, view.getTableModel().getRowCount());
@@ -160,7 +159,7 @@ public class TestExample {
         }
         Date nowDate = new Date();
 
-        // asserting changes are observed in the JTable
+        // asserting changes are observed in the JTable - amount, category and timestep are matched
         assertEquals(amount, (double) view.getJTransactionsTable().getValueAt(0,1), 0.01);
         assertEquals(category, (String) view.getJTransactionsTable().getValueAt(0,2));
         assertTrue(nowDate.getTime() - transactionDate.getTime() < 60000);
@@ -201,21 +200,24 @@ public class TestExample {
         assertEquals(0, model.getTransactions().size());
 
         double amount = -50.0; // negative value
-        String category = "food"; // invalid category name
+        String category = "food"; 
 
         try
-        {
+        {   
+            // Attempt to add an invalid transaction
             Transaction transaction = new Transaction(amount, category);
             controller.addTransaction(amount, category);
         }
         catch(java.lang.IllegalArgumentException error_m)
         {
             String message = "The amount is not valid.";
+            // Asserting that appropriate message is displayed
             assertEquals(message, error_m.getMessage());
             
             // transaction size and total cost should be unchanged
-            assertEquals(0, model.getTransactions().size());
-            assertEquals(0, getTotalCost(), 0.01);
+            assertEquals(0, view.getJTransactionsTable().getRowCount());
+            // As there is no transaction, therefore the model should be empty and no total cost would be displayed
+            assertEquals(0, view.getTableModel().getRowCount());
         }
     }
 
@@ -236,14 +238,16 @@ public class TestExample {
         double amount_3 = 100.0;
         String category_3 = "food";
 
+        // Adding several transactions
         controller.addTransaction(amount_1, category_1);
         controller.addTransaction(amount_2, category_2);
         controller.addTransaction(amount_3, category_3);
 
+        // Setting a filter amount
         double filter_amount = 100.0;
-
+        // Creating the filter object
         AmountFilter amountFilter = new AmountFilter(filter_amount);
-        
+        // Apply filter on the list of transactions
         List<Transaction> filteredTransactions = amountFilter.filter(model.getTransactions());
 
         String transactionDateString = filteredTransactions.get(0).getTimestamp();
@@ -256,8 +260,9 @@ public class TestExample {
             transactionDate = null;
         }
         Date nowDate = new Date();
-
+        // Asserting only one transaction satisfying the filter is there in the list
         assertEquals(1,filteredTransactions.size());
+        // Asserting the fields of received filter transaction
         assertEquals(amount_3,filteredTransactions.get(0).getAmount(), 0.01);
         assertEquals(category_3,filteredTransactions.get(0).getCategory());
         assertTrue(nowDate.getTime() - transactionDate.getTime() < 60000);
@@ -279,15 +284,16 @@ public class TestExample {
 
         double amount_3 = 100.0;
         String category_3 = "food";
-
+        // Adding several transactions
         controller.addTransaction(amount_1, category_1);
         controller.addTransaction(amount_2, category_2);
         controller.addTransaction(amount_3, category_3);
 
+        // Setting a filter category
         String filter_category = "travel";
-
+        // Creating the filter object
         CategoryFilter catFilter = new CategoryFilter(filter_category);
-        
+        // Apply filter on the list of transactions
         List<Transaction> filteredTransactions = catFilter.filter(model.getTransactions());
 
         String transactionDateString = filteredTransactions.get(0).getTimestamp();
@@ -301,7 +307,9 @@ public class TestExample {
         }
         Date nowDate = new Date();
 
+        // Asserting only one transaction satisfying the filter is there in the list
         assertEquals(1,filteredTransactions.size());
+        // Asserting the fields of received filter transaction
         assertEquals(amount_2,filteredTransactions.get(0).getAmount(), 0.01);
         assertEquals(category_2,filteredTransactions.get(0).getCategory());
         assertTrue(nowDate.getTime() - transactionDate.getTime() < 60000);
@@ -315,29 +323,16 @@ public class TestExample {
         assertEquals(0, model.getTransactions().size());
 
         try{
+            // Attempt to perform an invalid delete/undo
             view.getDeleteTransactionBtn().doClick();
         }
         catch(IllegalArgumentException error)
-        {
+        {   
             String message = "There's no such transaction in the table!";
+            // Asserting valid error message is displayed
             assertEquals(message, error.getMessage());
         }
-        assertEquals(0, view.getTableModel().getRowCount());
-    }
-
-    @Test
-    public void testUndoNotAllowed_E() {
-        // Pre-condition: List of transactions is empty
-        assertEquals(0, model.getTransactions().size());
-
-        try{
-            view.getDeleteTransactionBtn().doClick();
-        }
-        catch(IllegalArgumentException error)
-        {
-            String message = "There's no such transaction in the table!";
-            assertEquals(message, error.getMessage());
-        }
+        // Asserting that the table model has no changes
         assertEquals(0, view.getTableModel().getRowCount());
     }
 
