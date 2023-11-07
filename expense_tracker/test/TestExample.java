@@ -148,9 +148,22 @@ public class TestExample {
         // One row for transaction and one row for the total cost row 
         assertEquals(2, view.getTableModel().getRowCount());
 
+        Transaction newTrans = model.getTransactions().get(0);
+        String transactionDateString = newTrans.getTimestamp();
+        Date transactionDate = null;
+        try {
+            transactionDate = Transaction.dateFormatter.parse(transactionDateString);
+        }
+        catch (ParseException pe) {
+            pe.printStackTrace();
+            transactionDate = null;
+        }
+        Date nowDate = new Date();
+
         // asserting changes are observed in the JTable
         assertEquals(amount, (double) view.getJTransactionsTable().getValueAt(0,1), 0.01);
         assertEquals(category, (String) view.getJTransactionsTable().getValueAt(0,2));
+        assertTrue(nowDate.getTime() - transactionDate.getTime() < 60000);
     
         // asserting that the total cost is correctly updated in the View
         assertEquals(amount, (double) view.getTableModel().getValueAt(1,3), 0.01);
@@ -203,40 +216,67 @@ public class TestExample {
         
         List<Transaction> filteredTransactions = amountFilter.filter(model.getTransactions());
 
+        String transactionDateString = filteredTransactions.get(0).getTimestamp();
+        Date transactionDate = null;
+        try {
+            transactionDate = Transaction.dateFormatter.parse(transactionDateString);
+        }
+        catch (ParseException pe) {
+            pe.printStackTrace();
+            transactionDate = null;
+        }
+        Date nowDate = new Date();
+
         assertEquals(1,filteredTransactions.size());
         assertEquals(amount_3,filteredTransactions.get(0).getAmount(), 0.01);
         assertEquals(category_3,filteredTransactions.get(0).getCategory());
+        assertTrue(nowDate.getTime() - transactionDate.getTime() < 60000);
     
     }
 
-    // @Test
-    // public void testFilterCategory()
-    // {
-    //     double amount_1 = 50.0;
-    //     String category_1 = "food";
 
-    //     double amount_2 = 120.0;
-    //     String category_2 = "travel";
+    @Test
+    public void testFilterCategory()
+    {
+        // Precondition, the model should be empty
+        assertEquals(0, model.getTransactions().size());
 
-    //     double amount_3 = 100.0;
-    //     String category_3 = "food";
+        double amount_1 = 50.0;
+        String category_1 = "food";
 
-    //     controller.addTransaction(amount_1, category_1);
-    //     controller.addTransaction(amount_2, category_2);
-    //     controller.addTransaction(amount_3, category_3);
+        double amount_2 = 120.0;
+        String category_2 = "travel";
 
-    //     double filter_category = "travel";
+        double amount_3 = 100.0;
+        String category_3 = "food";
 
-    //     CategoryFilter categoryFilter = new CategoryFilter(filter_category);
-    //     controller.setFilter(amountFilter);
-    //     controller.applyFilter();
+        controller.addTransaction(amount_1, category_1);
+        controller.addTransaction(amount_2, category_2);
+        controller.addTransaction(amount_3, category_3);
 
-    //     for(int col=0; i<=3;col++)
-    //     {
-    //         assertEquals(new Color(173, 255, 168), get_jtable_cell_component(view.getTransactionsTable(), 1, col));
-    //     }
+        String filter_category = "travel";
+
+        CategoryFilter catFilter = new CategoryFilter(filter_category);
+        
+        List<Transaction> filteredTransactions = catFilter.filter(model.getTransactions());
+
+        String transactionDateString = filteredTransactions.get(0).getTimestamp();
+        Date transactionDate = null;
+        try {
+            transactionDate = Transaction.dateFormatter.parse(transactionDateString);
+        }
+        catch (ParseException pe) {
+            pe.printStackTrace();
+            transactionDate = null;
+        }
+        Date nowDate = new Date();
+
+        assertEquals(1,filteredTransactions.size());
+        assertEquals(amount_2,filteredTransactions.get(0).getAmount(), 0.01);
+        assertEquals(category_2,filteredTransactions.get(0).getCategory());
+        assertTrue(nowDate.getTime() - transactionDate.getTime() < 60000);
     
-    // }
+    }
 
 
     // @Test
@@ -248,45 +288,4 @@ public class TestExample {
     //     assertEquals(0, view.getTableModel().getRowCount());
     //     // TODO: check if a JOptionPane appears after undo in a empty list
     // }
-
-    // @Test
-    // public void testUndoAllowed() {
-    //     // Pre-condition: List of transactions is empty
-    //     assertEquals(0, model.getTransactions().size());
-
-    //     // Perform the action: Add and remove a transaction
-    //     double amount = 50.0;
-    //     String category = "food";
-
-    //     Transaction addedTransaction = new Transaction(amount, category);
-    //     for (int i = 0; i < 2; i++) {
-    //         controller.addTransaction(amount, category);
-    //     }
-    //     // Pre-condition: List of transactions contains only
-    //     // the added transaction
-    //     int transaction_size = model.getTransactions().size()
-    //     assertEquals(3, transaction_size);
-    //     Transaction firstTransaction = model.getTransactions().get(1);
-    //     checkTransaction(amount, category, firstTransaction);
-
-    //     double current_cost = getTotalCost();
-    //     assertEquals(amount, getTotalCost(), 0.01);        
-
-    //     // Perform the action: Remove the transaction
-    //     // model.removeTransaction(addedTransaction);
-    //     // should use something from the controller
-
-    //     // Post-condition: List of transactions is empty
-    //     List<Transaction> transactions = model.getTransactions();
-    //     assertEquals(transaction_size - 1, transactions.size());
-
-    //     // Check the total cost after removing the transaction
-    //     double totalCost = getTotalCost();
-    //     assertEquals(current_cost - amount, totalCost, 0.01);
-
-    //     // Check the view instead of the model stuffs
-    //     assertEquals(current_cost - amount, view.getTableModel().getRowCount();, 0.01);
-    //     assertEquals(transaction_size - 1, view.getAmountField());
-    // }
-
 }
