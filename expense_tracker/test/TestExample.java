@@ -131,7 +131,7 @@ public class TestExample {
     @Test
     public void testAddTransactionView_N() {
         // - Steps: Add a transaction with amount 50.00 and category ”food”
-        // - Expected Output: Transaction is added to the table, Total Cost is updated
+        // - Expected Output: Transaction is added to the table, Total Cost is updated in the Table Model
 
         // Precondition, the model should be empty
         assertEquals(0, model.getTransactions().size());
@@ -157,7 +157,24 @@ public class TestExample {
 
     @Test
     public void testAddTransactionView_E() {
+        // - Steps: Try to add an invalid transaction with amount -50.00 and category ”food”
+        // - Expected Output: View remains same - no changes, as the transaction is invalid
 
+        // Precondition, the model should be empty
+        assertEquals(0, model.getTransactions().size());
+
+        double amount = -50.0;
+        String category = "food";
+        
+        // Trying to add an invalid new transaction to the view (through controller)
+        controller.addTransaction(amount, category);
+
+        // Postconditions, transaction should make no changes to the table and Table Model
+        // asserting that no changes are observed in the Table Model (it is still empty)
+        assertEquals(0, view.getTableModel().getRowCount());
+
+        // asserting JTable is empty
+        assertEquals(0, view.getJTransactionsTable().getRowCount());
     }
 
     
