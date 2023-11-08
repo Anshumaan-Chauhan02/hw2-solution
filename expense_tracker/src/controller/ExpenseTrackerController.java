@@ -72,4 +72,18 @@ public class ExpenseTrackerController {
       view.toFront();}
 
   }
+
+  /**
+   * Function to take in the index number of selected row in GUI, and calling functions in Model and VIew to make necessary updates
+   * @param index_number Specifies the index number of the row selected in GUI
+   */
+  public boolean deleteTransaction(int index_number) {
+    // Updating the model
+    model.removeTransaction(index_number);
+    // Updating the view
+    view.deleteTransactionRow(index_number); // the row number also start from 0
+    refresh();
+    return true;
+  }
+  
 }

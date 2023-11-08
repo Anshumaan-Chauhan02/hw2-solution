@@ -26,6 +26,8 @@ public class ExpenseTrackerView extends JFrame {
 
   private JTextField amountFilterField;
   private JButton amountFilterBtn;
+  // New Delete Transaction Button for Undo functionality
+  private JButton deleteTransactionBtn;
 
   
 
@@ -41,6 +43,8 @@ public class ExpenseTrackerView extends JFrame {
     transactionsTable = new JTable(model);
 
     addTransactionBtn = new JButton("Add Transaction");
+    // Initialization of the transaction button 
+    deleteTransactionBtn = new JButton("Delete");
 
     // Create UI components
     JLabel amountLabel = new JLabel("Amount:");
@@ -71,10 +75,14 @@ public class ExpenseTrackerView extends JFrame {
     inputPanel.add(categoryLabel); 
     inputPanel.add(categoryField);
     inputPanel.add(addTransactionBtn);
+    // Adding the button to Input Panel Layout 
+    inputPanel.add(deleteTransactionBtn);
 
     JPanel buttonPanel = new JPanel();
     buttonPanel.add(amountFilterBtn);
     buttonPanel.add(categoryFilterBtn);
+    // Adding Delete Transaction Button to the Button Layout
+    buttonPanel.add(deleteTransactionBtn);
   
     // Add panels to frame
     add(inputPanel, BorderLayout.NORTH);
@@ -92,10 +100,17 @@ public class ExpenseTrackerView extends JFrame {
   public DefaultTableModel getTableModel() {
     return model;
   }
-    
 
   public List<Transaction> getTransactionsTable() {
     return (List<Transaction>) transactionsTable;
+  }
+
+  /**
+   * A function that returns the Transaction table object as JTable
+   * @return JTable object consisting of all transactions
+   */
+  public JTable getJTransactionsTable(){
+    return transactionsTable;
   }
 
   public double getAmountField() {
@@ -171,6 +186,22 @@ public class ExpenseTrackerView extends JFrame {
 
   public JButton getAddTransactionBtn() {
     return addTransactionBtn;
+  }
+
+  /**
+   * Getter method for the newly added Delete Transaction Button
+   * @return Delete Transaction button 
+   */
+  public JButton getDeleteTransactionBtn() {
+    return deleteTransactionBtn;
+  }
+
+  /**
+   * Function to remove a row from the DefaultTableModel after a transaction is deleted from the JTable
+   * @param index_number provides the index of the row to be deleted
+   */
+  public void deleteTransactionRow(int index_number) {
+    this.getTableModel().removeRow(index_number);
   }
 
 
